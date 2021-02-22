@@ -49,3 +49,17 @@ print("Yet: ", Yet)
 ind = Y.index(Ymin)
 print("Точка плану, що задовольняє заданому критерію оптимальності: Y({0},"
       " {1}, {2}) = min(Y) = {3}".format(X1[ind], X2[ind], X3[ind], Ymin))
+
+Yaver = sum(Y)/len(Y)
+print("Yaver: ", Yaver)
+
+y = min(Y)
+for i in range(len(Y)):
+      if Yaver - y > Yaver - Y[i] and Yaver - Y[i] > 0:
+            y = Y[i]
+
+print("--> Yaver = ", y)
+
+ind = Y.index(y)
+print("Точка плану, що задовольняє критерію оптимальності за варіантом 208: Y({0},"
+      " {1}, {2}) = {3}".format(X1[ind], X2[ind], X3[ind], y))
