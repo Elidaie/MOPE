@@ -1,32 +1,14 @@
 from random import randint
 import numpy as np
 from math import sqrt
-
+from scipy.stats import f, t
 m = 3
-
-cohren_table = {2: 0.7679,
-                3: 0.6841,
-                4: 0.6287,
-                5: 0.5892,
-                6: 0.5598}
-
-student_table = {8: 2.306,
-                 12: 2.179,
-                 16: 2.120,
-                 20: 2.086,
-                 24: 2.064}
-
-fisher_table = {8: [5.3, 4.5, 4.1, 3.8],
-                12: [4.8, 3.9, 3.5, 3.3],
-                16: [4.5, 3.6, 3.2, 3],
-                20: [4.4, 3.5, 3.1, 2.9],
-                24: [4.3, 3.4, 3, 2.8]}
 
 x1_min, x1_max = -30, 0
 x2_min, x2_max = -25, 10
 x3_min, x3_max = -25, -5
 
-xcp_min, xcp_max = round((x1_min + x1_min + x1_min) / 3), round((x1_max + x2_max + x3_max) / 3)
+xcp_min, xcp_max = round((x1_min + x2_min + x3_min) / 3), round((x1_max + x2_max + x3_max) / 3)
 y_min, y_max = 200 + xcp_min, 200 + xcp_max
 
 x_norm = [[1, -1, -1, -1],
@@ -119,7 +101,9 @@ def cohren(m, y, y_aver, x_norm, b_natur):
     Gp = max(dispersion) / sum(dispersion)
     print("Gp", Gp)
     f1 = m - 1
-    Gt = cohren_table[f1]
+    f2 = 4
+    Gt = f.ppf(q=(1 - q / f1), dfn=f2, dfd=(f1 - 1) * f2)
+    Gt = Gt / (Gt + f1 - 1)
     if Gp < Gt:
         print("Gp < Gt\n{0:.4f} < {1} => дисперсія однорідна".format(Gp, Gt))
         student(m, dispersion, y_aver, x_norm, b_natur)
@@ -139,7 +123,8 @@ def student(m, dispersion, y_aver, x_norm, b_natur):
     t = [abs(beta[i]) / s_beta for i in range(4)]
 
     f3 = (m - 1) * 4
-    t_table = student_table[f3]
+    qq = (1 + 0.95) / 2
+    t_table = t.ppf(df=f3, q=qq)
     b_impor = []
     for i in range(4):
         if t[i] > t_table:
@@ -176,7 +161,7 @@ def fisher(m, y_aver, b_impor, y_impor, sb):
     f4 = 4 - d
     s_ad = sum((y_impor[i] - y_aver[i]) ** 2 for i in range(4)) * m / f4
     Fp = s_ad / sb
-    Ft = fisher_table[f3][f4 - 1]
+    Ft = f.ppf(dfn=f4, dfd=f3, q=1 - 0.05)
     if Fp < Ft:
       print("Fp < Ft => {0:.2f} < {1}".format(Fp, Ft))
       print("Отримана математична модель при рівні значимості 0.05 адекватна експериментальним даним")
