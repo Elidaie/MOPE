@@ -204,16 +204,14 @@ def inter_coef(x_natur, x_norm, y):
     print("\nМатриця Y\n", y)
     print("Cередні значення функції відгуку за рядками:", [round(elem, 3) for elem in y_aver])
 
-    b0 = sum(y_aver) / n
-    b1 = sum(x_norm[i][1] * y_aver[i] for i in range(n)) / n
-    b2 = sum(x_norm[i][2] * y_aver[i] for i in range(n)) / n
-    b3 = sum(x_norm[i][3] * y_aver[i] for i in range(n)) / n
-    b12 = sum(x_norm[i][4] * y_aver[i] for i in range(n)) / n
-    b13 = sum(x_norm[i][5] * y_aver[i] for i in range(n)) / n
-    b23 = sum(x_norm[i][6] * y_aver[i] for i in range(n)) / n
-    b123 = sum(x_norm[i][7] * y_aver[i] for i in range(n)) / n
+    b_norm = []
+    b_norm.append(sum(y_aver) / n)
 
-    b_norm = [b0, b1, b2, b3, b12, b13, b23, b123]
+    for j in range(1, n):
+        b = 0
+        for i in range(n):
+            b += x_norm[i][j] * y_aver[i]
+        b_norm.append(b/n)
 
     print("\nНормоване рівняння регресії: y = {0:.2f} {1:+.2f}*x1 {2:+.2f}*x2 {3:+.2f}*x3 {4:+.2f}*x12 "
           "{5:+.2f}*x13 {6:+.2f}*x23 {7:+.2f}*x123".format(*b_norm))
