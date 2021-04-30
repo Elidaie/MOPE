@@ -262,9 +262,17 @@ def student(m, dispersion, y_aver, x_norm, b):
         else:
             b_impor.append(0)
     print("Незначні коефіцієнти регресії")
+    b_not_imp = []
     for i in range(k):
         if b[i] not in b_impor:
+            b_not_imp.append(b[i])
             print("b{0} = {1:.3f}".format(i, b[i]))
+        else:
+            b_not_imp.append(0)
+
+    print("Рівняння регресії з незначущими коефіцієнтами:\ny = {0:.3f} {1:+.3f}*x1 {2:+.3f}*x2 {3:+.3f}*x3"
+          "{4:+.3f}*x1*x2 {5:+.3f}*x1*x3 {6:+.3f}*x2*x3 {7:+.3f}*x1*x2*x3 {8:+.3f}*x1^2 {9:+.3f}*x2^2"
+          "{10:+.3f}*x3^2".format(*b_not_imp))
 
     y_impor = []
     for j in range(n):
