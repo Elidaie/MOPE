@@ -3,6 +3,7 @@ import sklearn.linear_model as lm
 from scipy.stats import f, t
 from math import sqrt
 from pyDOE2 import *
+import time
 
 x_range = [(-30, 0), (-25, 10), (-25, -5)]
 
@@ -219,6 +220,7 @@ def coef_3(x, y_aver, y, x_norm):
 # ----------------- Критерій Кохрена -----------------------
 def cohren(m, y, y_aver, x_norm, b):
     print("\nКритерій Кохрена")
+    start_time = time.time()
     dispersion = []
     for i in range(n):
         z = 0
@@ -241,6 +243,8 @@ def cohren(m, y, y_aver, x_norm, b):
     Gt = round(cohren_t(f1, f2, q), 4)
 
     if Gp < Gt:
+        cohren_time = time.time() - start_time
+        print("Час виконання перевірки за критерієм Кохрена: ", cohren_time)
         print("Gp < Gt\n{0:.4f} < {1} => дисперсія однорідна".format(Gp, Gt))
         student(m, dispersion, y_aver, x_norm, b)
     else:
@@ -256,6 +260,7 @@ def cohren(m, y, y_aver, x_norm, b):
 # ----------------------- Критерій Стюдента --------------------------------
 def student(m, dispersion, y_aver, x_norm, b):
     print("\nКритерій Стюдента")
+    start_time = time.time()
     sb = sum(dispersion) / n
     s_beta = sqrt(sb / (n * m))
     k = len(x_norm[0])
@@ -281,7 +286,8 @@ def student(m, dispersion, y_aver, x_norm, b):
     y_impor = []
     for j in range(n):
         y_impor.append(regression([x_norm[j][i] for i in range(len(t_t))], b_impor))
-
+    student_time = time.time() - start_time
+    print("Час виконання перевірки за критерієм Стьюдента: ", student_time)
     print("Значення функції відгуку зі значущими коефіцієнтами\n", [round(elem, 3) for elem in y_impor])
     fisher(m, y_aver, b_impor, y_impor, sb)
 
@@ -289,6 +295,7 @@ def student(m, dispersion, y_aver, x_norm, b):
 def fisher(m, y_aver, b_impor, y_impor, sb):
     global flag
     print("\nКритерій Фішера")
+    start_time = time.time()
     d = 0
     for i in b_impor:
         if i:
@@ -300,9 +307,13 @@ def fisher(m, y_aver, b_impor, y_impor, sb):
     Ft = f.ppf(dfn=f4, dfd=f3, q=1 - 0.05)
 
     if Fp < Ft:
+        fisher_time = time.time() - start_time
+        print("Час виконання перевірки за критерієм Фішера: ", fisher_time)
         print("Fp < Ft => {0:.2f} < {1}".format(Fp, Ft))
         print("Отримана математична модель при рівні значимості 0.05 адекватна експериментальним даним")
     else:
+        fisher_time = time.time() - start_time
+        print("Час виконання перевірки за критерієм Фішера: ", fisher_time)
         print("Fp > Ft => {0:.2f} > {1}".format(Fp, Ft))
         print("Рівняння регресії неадекватно оригіналу при рівні значимості 0.05")
         if flag == "1":
